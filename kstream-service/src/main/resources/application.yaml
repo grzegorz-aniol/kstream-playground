@@ -11,6 +11,7 @@ spring.cloud.stream:
     configuration:
       default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      commit.interval.ms: 1000
 
   bindings:
     input:

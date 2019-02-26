@@ -23,9 +23,9 @@ public class KStreamserviceApplication {
 		SpringApplication.run(KStreamserviceApplication.class, args);
 	}
 
-  @StreamListener
+  @StreamListener("input")
   @SendTo("output")
-  public KStream<String, String> processIotSignals(@Input("input") KStream<String, String> source) {
+  public KStream<String, String> processIotSignals(KStream<String, String> source) {
     final Map<String, Boolean> lastState = new HashMap<>();
 
     KTable<String, String> deviceStatusTable = source
@@ -44,11 +44,11 @@ public class KStreamserviceApplication {
     return deviceStatusTable.toStream();
   }
 
-  interface Binder {
-	  @Input("input")
-    KStream<?, ?> input();
-
-    @Input("output")
-    KStream<?, ?> output();
-  }
+//  interface Binder {
+//	  @Input("input")
+//    KStream<?, ?> input();
+//
+//    @Input("output")
+//    KStream<?, ?> output();
+//  }
 }
