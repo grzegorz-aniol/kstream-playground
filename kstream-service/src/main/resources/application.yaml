@@ -1,0 +1,19 @@
+spring.cloud.stream:
+#  bindings.input.binder: kafka
+  kafka.binder.brokers: localhost:9092,localhost:9093,localhost:9094
+
+#  kafka.bindings:
+#    iot_status:
+#      startOffset: latest
+
+  kafka.streams.binder:
+    applicationId: kstream-service
+    configuration:
+      default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+  bindings:
+    input:
+      destination: iot_status
+    output:
+      destination: iot_change

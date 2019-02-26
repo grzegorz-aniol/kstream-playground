@@ -1,0 +1,29 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'idea'
+
+    group = 'org.gangel.kstreams-playground'
+    version '1.0-SNAPSHOT'
+
+    buildscript {
+        ext {
+            kafkaVersion = '2.1.1'
+            junitVersion = '4.11'
+        }
+        repositories {
+            mavenCentral()
+        }
+    }
+
+    sourceCompatibility = 11
+    targetCompatibility = 11
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile "junit:junit:$junitVersion"
+    }   
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'kstreams-playground'
+include 'kstream-service'
+include 'kstream-apps'
+
