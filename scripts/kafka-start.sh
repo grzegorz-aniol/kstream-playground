@@ -6,12 +6,19 @@ then
 fi 
 
 CONFIG_FILE=./config/server-$1.properties
+LOG_DIR=./logs/instance$1/
+
 if ! [ -e ${CONFIG_FILE} ]
 then 
 	echo "Can't file configuration file ${CONFIG_FILE}"
 	exit 2
 fi 
 
-./bin/windows/kafka-server-start.bat ${CONFIG_FILE}
+if ! [ -d ${LOG_DIR} ]
+then
+	echo Creating directory for log files: ${LOG_DIR}
+	mkdir -p ${LOG_DIR}
+fi
 
-pause
+LOG_DIR=${LOG_DIR} ./bin/windows/kafka-server-start.bat ${CONFIG_FILE}
+
