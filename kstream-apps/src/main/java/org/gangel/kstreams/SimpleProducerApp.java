@@ -13,6 +13,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Produce endless stream of records that simulate IoT sensor values.
+ * Each sensor may generate olny one of two values: 0 or 1
+ */
 public class SimpleProducerApp {
 
   public static final String PARKING_STATUS = "parking_status";
@@ -44,12 +48,12 @@ public class SimpleProducerApp {
     final var rnd = new Random();
     Supplier<Long> nextTsFun = () -> System.currentTimeMillis() + rnd.nextLong() % 15000;
 
-    final int NUM_OF_DEV = 10;
-    final double SIGNALS_PER_SECOND = 1;
-    final long TOTAL_OPS = (long) (NUM_OF_DEV * SIGNALS_PER_SECOND);
-    final long sleepTimer = 1000 / TOTAL_OPS; // how long you want to wait before the next record to be sent
+    final int numOfSensors = 10;
+    final double sensorSignalsPerSec = 1;
+    final long totalOPS = (long) (numOfSensors * sensorSignalsPerSec);
+    final long sleepTimer = 1000 / totalOPS; // how long you want to wait before the next record to be sent
 
-    final ArrayList<Boolean> devStatus = IntStream.rangeClosed(1, NUM_OF_DEV)
+    final ArrayList<Boolean> devStatus = IntStream.rangeClosed(1, numOfSensors)
         .boxed()
         .map(it -> false)
         .collect(Collectors.toCollection(ArrayList<Boolean>::new));
@@ -61,21 +65,26 @@ public class SimpleProducerApp {
     long lastUpdate = System.currentTimeMillis();
     try {
       while (true) {
-        var device = (int) (cnt % NUM_OF_DEV);
+        // pick up next sensor and sends its current indication
+        var device = (int) (cnt % numOfSensors);
         var key = Long.toString(device);
         var value = devStatus.get(device) ? "1" : "0";
         myProducer.send(new ProducerRecord<String, String>(TopicId.PARKING_STATUS, key, value));
         ++cnt;
 
-        for(int i=0; i < NUM_OF_DEV; ++i) {
+        // check if any sensor need to change its value in this iteration
+        for(int i=0; i < numOfSensors; ++i) {
           long ts = System.currentTimeMillis();
           if (nextChange.get(i) < ts) {
             devStatus.set(i, !devStatus.get(i));
-            nextChange.set(i, nextTsFun.get());
+            nextChange.set(i, nextTsFun.get()); // calculate when the value is going to change next time
           }
         }
 
+        // control throughput
         Thread.sleep(sleepTimer);
+
+        // log every 10 sec number of generates messages
         if (System.currentTimeMillis() - lastUpdate > Duration.ofSeconds(10).toMillis()) {
           lastUpdate = System.currentTimeMillis();
           System.out.printf("Generated messages: %d\n", cnt);

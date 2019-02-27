@@ -3,6 +3,7 @@ package org.gangel.kstreams;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
@@ -12,6 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * Transform records from the topic using Kafka Streams
+ * Input stream of sensor indications (0,1) is passed through the filter that detects just each sensor change.
+ * All indications that are the same are filtered out
+ */
 public class DevStreamApp {
 
   public static class RecordWithTimestamp {
@@ -57,15 +63,25 @@ public class DevStreamApp {
 
     deviceStatusTable.toStream().to(TopicId.PARKING_STATUS_CHANGES);
 
-    source.groupByKey()
-        .windowedBy(SessionWindows.with(Duration.ofMinutes(1)).grace(Duration.ofSeconds(30)))
-        .reduce((v1, v2) -> v2)
-        .toStream().to(TopicId.PARKING_STATUS_WIN1_STREAM, Produced.with(WindowedSerdes.sessionWindowedSerdeFrom(String.class), Serdes.String()));
+//    source.groupByKey()
+//        .windowedBy(SessionWindows.with(Duration.ofSeconds(30)))
+//        .reduce((v1, v2) -> v2)
+//        .toStream()
+//        .peek((w, v) -> {
+//          System.out.printf("Windows key=%s, start=%d, end=%d, value=%s\n", w.key(), w.window().start(), w.window().end(), v);
+//        })
+//        .map((k,v)-> KeyValue.pair(k.key(), v))
+//        .to(TopicId.PARKING_STATUS_WIN1_STREAM, Produced.with(WindowedSerdes.sessionWindowedSerdeFrom(String.class), Serdes.String()));
 
-    source.groupByKey()
-        .windowedBy(TimeWindows.of(Duration.ofMinutes(1)).advanceBy(Duration.ofSeconds(30)))
-        .reduce((v1, v2) -> v2)
-        .toStream().to(TopicId.PARKING_STATUS_WIN2_STREAM, Produced.with(WindowedSerdes.timeWindowedSerdeFrom(String.class), Serdes.String()));
+//    source.groupByKey()
+//        .windowedBy(TimeWindows.of(Duration.ofSeconds(30)).advanceBy(Duration.ofSeconds(30)))
+//        .reduce((v1, v2) -> v2)
+//        .toStream()
+//        .peek((w, v) -> {
+//          System.out.printf("Windows key=%s, start=%d, end=%d, value=%s\n", w.key(), w.window().start(), w.window().end(), v);
+//        })
+//        .map((k,v)-> KeyValue.pair(k.key(), v))
+//        .to(TopicId.PARKING_STATUS_WIN2_STREAM);
 
     final KafkaStreams streams = new KafkaStreams(builder.build(), props);
 

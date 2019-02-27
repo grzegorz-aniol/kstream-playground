@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+/**
+ * Simple consumer of Kafka topic.
+ * The topic need to have key and value serialized as String
+ */
 public class SimpleConsumerApp {
 
   public static void main(String[] args) throws ParseException {
