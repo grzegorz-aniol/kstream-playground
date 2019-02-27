@@ -3,12 +3,12 @@ package org.gangel.kstreams;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -44,7 +44,7 @@ public class DevStreamApp {
 
     final StreamsBuilder builder = new StreamsBuilder();
 
-    final KStream<String, String> source = builder.stream(TopicId.PARKING_STATUS);
+    final KStream<String, String> source = builder.stream(TopicId.IOT_STATUS);
 
     final Map<String, Boolean> lastState = new HashMap<>();
 
@@ -59,9 +59,9 @@ public class DevStreamApp {
           return isChanged;
         })
         .groupByKey()
-        .reduce((v1, v2) -> v2, Materialized.as(TopicId.PARKING_STATUS_STORE));
+        .reduce((v1, v2) -> v2, Materialized.as(TopicId.IOT_STAT_TABLE));
 
-    deviceStatusTable.toStream().to(TopicId.PARKING_STATUS_CHANGES);
+    deviceStatusTable.toStream().to(TopicId.IOT_CHANGE);
 
 //    source.groupByKey()
 //        .windowedBy(SessionWindows.with(Duration.ofSeconds(30)))
@@ -71,7 +71,7 @@ public class DevStreamApp {
 //          System.out.printf("Windows key=%s, start=%d, end=%d, value=%s\n", w.key(), w.window().start(), w.window().end(), v);
 //        })
 //        .map((k,v)-> KeyValue.pair(k.key(), v))
-//        .to(TopicId.PARKING_STATUS_WIN1_STREAM, Produced.with(WindowedSerdes.sessionWindowedSerdeFrom(String.class), Serdes.String()));
+//        .to(TopicId.PARKING_STATUS_WIN1_STREAM);
 
 //    source.groupByKey()
 //        .windowedBy(TimeWindows.of(Duration.ofSeconds(30)).advanceBy(Duration.ofSeconds(30)))

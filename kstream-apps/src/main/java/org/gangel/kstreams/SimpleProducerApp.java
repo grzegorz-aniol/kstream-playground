@@ -69,7 +69,7 @@ public class SimpleProducerApp {
         var device = (int) (cnt % numOfSensors);
         var key = Long.toString(device);
         var value = devStatus.get(device) ? "1" : "0";
-        myProducer.send(new ProducerRecord<String, String>(TopicId.PARKING_STATUS, key, value));
+        myProducer.send(new ProducerRecord<String, String>(TopicId.IOT_STATUS, key, value));
         ++cnt;
 
         // check if any sensor need to change its value in this iteration

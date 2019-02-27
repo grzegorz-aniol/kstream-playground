@@ -21,7 +21,7 @@ public class SimpleConsumerApp {
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = parser.parse( options, args);
 
-    String topicName = Optional.ofNullable(cmd.getOptionValue("t")).orElse(TopicId.PARKING_STATUS);
+    String topicName = Optional.ofNullable(cmd.getOptionValue("t")).orElse(TopicId.IOT_STATUS);
 
     // Create the Properties class to instantiate the Consumer with the desired settings:
     Properties props = new Properties();
