@@ -71,7 +71,7 @@ public class DevStreamApp {
 //          System.out.printf("Windows key=%s, start=%d, end=%d, value=%s\n", w.key(), w.window().start(), w.window().end(), v);
 //        })
 //        .map((k,v)-> KeyValue.pair(k.key(), v))
-//        .to(TopicId.PARKING_STATUS_WIN1_STREAM);
+//        .to(TopicId.IOT_CHANGE_SESSIONWIN);
 
 //    source.groupByKey()
 //        .windowedBy(TimeWindows.of(Duration.ofSeconds(30)).advanceBy(Duration.ofSeconds(30)))
@@ -81,7 +81,7 @@ public class DevStreamApp {
 //          System.out.printf("Windows key=%s, start=%d, end=%d, value=%s\n", w.key(), w.window().start(), w.window().end(), v);
 //        })
 //        .map((k,v)-> KeyValue.pair(k.key(), v))
-//        .to(TopicId.PARKING_STATUS_WIN2_STREAM);
+//        .to(TopicId.IOT_CHANGE_TIMEWIN);
 
     final KafkaStreams streams = new KafkaStreams(builder.build(), props);
 

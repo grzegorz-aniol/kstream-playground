@@ -6,8 +6,6 @@ import org.apache.kafka.streams.kstream.Materialized;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binder.kafka.streams.annotations.KafkaStreamsProcessor;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -39,16 +37,9 @@ public class KStreamserviceApplication {
           return isChanged;
         })
         .groupByKey()
-        .reduce((v1, v2) -> v2, Materialized.as(TopicId.PARKING_STATUS_STORE));
+        .reduce((v1, v2) -> v2, Materialized.as(TopicId.IOT_STAT_TABLE));
 
     return deviceStatusTable.toStream();
   }
 
-//  interface Binder {
-//	  @Input("input")
-//    KStream<?, ?> input();
-//
-//    @Input("output")
-//    KStream<?, ?> output();
-//  }
 }
